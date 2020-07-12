@@ -29,7 +29,7 @@ namespace Api.Infrastructure.Applicant
 
         public async Task<long> CreateApplicant(Core.Applicant.Applicant applicant)
         {
-            _context.Applicants.Add(applicant);
+            await _context.Applicants.AddAsync(applicant);
             await _context.SaveChangesAsync();
             return applicant.Id;
         }

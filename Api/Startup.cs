@@ -2,7 +2,9 @@ using System;
 using System.IO;
 using System.Reflection;
 using Api.Application.Applicant;
+using Api.Application.Mortgage;
 using Api.Core.Applicant;
+using Api.Core.Mortgage;
 using Api.Data;
 using Api.Infrastructure.Applicant;
 using Microsoft.AspNetCore.Builder;
@@ -35,8 +37,12 @@ namespace Api
 
             services.AddDbContext<ApplicantDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DataBaseContext")));
+            services.AddDbContext<MortgageDbContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("DataBaseContext")));
             services.AddScoped<IApplicantRepository, ApplicantRepository>();
             services.AddScoped<IApplicantService, ApplicantService>();
+            services.AddScoped<IMortgageRepository, MortgageRepository>();
+            services.AddScoped<IMortgageService, MortgageService>();
             services.AddControllers();
         }
 
