@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Api.Core.Applicant;
 using Api.Core.Mortgage;
@@ -29,7 +31,24 @@ namespace Api.Application.Mortgage
         public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetQualifiedMortgages(long applicantId, decimal propertyValue,
             decimal depositAmount)
         {
-            throw new System.NotImplementedException();
+            
+            if (_applicantRepository.ApplicantExists(applicantId))
+            {
+                DateTime today = DateTime.Now;
+                var applicant = await _applicantRepository.GetApplicant(applicantId);
+                TimeSpan age = today - applicant.DateOfBirth;
+                if ((age.TotalDays / 365) >= 18)
+                {
+                    var mortgages = (List<Core.Mortgage.Mortgage>) await _mortgageMortgageRepository.GetMortgages();
+                    decimal mortgageAmount = propertyValue - depositAmount;
+                    int ltv = (int) ((mortgageAmount / propertyValue) * 100);
+                    if (ltv <= 90)
+                    {
+                        return mortgages.Where(m => m.LoanToValue >= ltv).ToList();
+                    }
+                }
+            }
+            return new List<Core.Mortgage.Mortgage>();
         }
 
         public async Task<long> CreateMortgage(CreateMortgageDto createMortgageDto)

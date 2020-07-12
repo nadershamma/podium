@@ -9,6 +9,7 @@ using Api.Core.Mortgage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace Api.Controllers
 {
@@ -18,12 +19,12 @@ namespace Api.Controllers
     public class MortgagesController : ControllerBase
     {
         private readonly IMortgageService _service;
-        
+
         public MortgagesController(IMortgageService service)
         {
             _service = service;
         }
-        
+
         /// <summary>
         /// Get all mortgages.
         /// </summary>
@@ -36,13 +37,25 @@ namespace Api.Controllers
         /// <returns> List of mortgages in the database</returns>
         /// <response code="200">Returns list of mortgages</response>
         [HttpGet]
-        [ProducesResponseType( typeof(IEnumerable<Mortgage>), statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Mortgage>), statusCode: StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<Mortgage>>> GetMortgages()
+        public async Task<ActionResult<IEnumerable<Mortgage>>> GetMortgages(long? applicantId, decimal? propertyValue,
+            decimal? depositValue)
         {
-            var mortgages = await _service.GetMortgages();
+            IEnumerable<Mortgage> mortgages;
+            if (applicantId != null && propertyValue != null & depositValue != null)
+            {
+                mortgages = await _service.GetQualifiedMortgages((long) applicantId, (decimal) propertyValue,
+                    (decimal) depositValue);
+            }
+            else
+            {
+                mortgages = await _service.GetMortgages();
+            }
+
             return Ok(mortgages);
         }
+
 
         /// <summary>
         /// Get mortgage by id.
@@ -57,8 +70,8 @@ namespace Api.Controllers
         /// <response code="200">Return mortgage</response>
         /// <response code="404">Mortgage not found</response>
         [HttpGet("{id}")]
-        [ProducesResponseType( typeof(Mortgage), statusCode: StatusCodes.Status200OK)]
-        [ProducesResponseType( StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Mortgage), statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Mortgage>> GetMortgage(long id)
         {
             var mortgage = await _service.GetMortgage(id);
@@ -70,7 +83,6 @@ namespace Api.Controllers
 
             return mortgage;
         }
-
 
         /// <summary>
         /// Creates a new mortgage.
@@ -92,18 +104,18 @@ namespace Api.Controllers
         /// <response code="201">Returns 201 Created</response>
         /// <response code="400">If mortgage is null</response> 
         [HttpPost]
-        [ProducesResponseType( StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<CreateMortgageDto>> PostApplicant(CreateMortgageDto createMortgageDto)
         {
             var mortgageId = await _service.CreateMortgage(createMortgageDto);
-            
+
             return CreatedAtAction(
-                nameof(GetMortgage), 
-                new {id = mortgageId}, 
+                nameof(GetMortgage),
+                new {id = mortgageId},
                 new {id = mortgageId});
         }
-        
+
         /// <summary>
         /// Delete an mortgage.
         /// </summary>
@@ -118,8 +130,8 @@ namespace Api.Controllers
         /// <response code="204">Returns OK no content</response>
         /// <response code="404">If the applicant is null</response> 
         [HttpDelete("{id}")]
-        [ProducesResponseType( statusCode: StatusCodes.Status204NoContent)]
-        [ProducesResponseType( StatusCodes.Status404NotFound)] 
+        [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteMortgage(long id)
         {
             if (!_service.MortgageExists(id))
@@ -131,6 +143,5 @@ namespace Api.Controllers
 
             return StatusCode(StatusCodes.Status204NoContent);
         }
-        
     }
 }
