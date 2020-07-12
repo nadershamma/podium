@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Core.Mortgage;
-using Api.Data;
+using Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Infrastructure.Applicant
+namespace Api.Infrastructure.Mortgage
 {
     public class MortgageRepository : IMortgageRepository
     {
@@ -16,17 +16,17 @@ namespace Api.Infrastructure.Applicant
             _context = context;
         }
 
-        public async Task<IEnumerable<Mortgage>> GetMortgages()
+        public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetMortgages()
         {
-            return await _context.Mortgages.ToListAsync();
+            return await _context.Mortgages.ToListAsync<Core.Mortgage.Mortgage>();
         }
 
-        public async Task<Mortgage> GetMortgage(long id)
+        public async Task<Core.Mortgage.Mortgage> GetMortgage(long id)
         {
             return await _context.Mortgages.FindAsync(id);
         }
 
-        public async Task<long> CreateMortgage(Mortgage mortgage)
+        public async Task<long> CreateMortgage(Core.Mortgage.Mortgage mortgage)
         {
             await _context.Mortgages.AddAsync((mortgage));
             await _context.SaveChangesAsync();
@@ -42,7 +42,7 @@ namespace Api.Infrastructure.Applicant
 
         public bool MortgageExists(long id)
         { 
-            return _context.Mortgages.Any(e => e.Id == id);
+            return Queryable.Any<Core.Mortgage.Mortgage>(_context.Mortgages, e => e.Id == id);
         
         }
     }

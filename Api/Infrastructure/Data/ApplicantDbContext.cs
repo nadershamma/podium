@@ -1,11 +1,10 @@
-using Api.Core.Applicant;
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Data
+namespace Api.Infrastructure.Data
 {
     public class ApplicantDbContext : DbContext
     {
-        public DbSet<Applicant> Applicants { get; set; }
+        public DbSet<Core.Applicant.Applicant> Applicants { get; set; }
 
         public ApplicantDbContext(DbContextOptions<ApplicantDbContext> options): base(options)
         {

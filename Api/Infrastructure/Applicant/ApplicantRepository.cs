@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Core.Applicant;
-using Api.Data;
+using Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api.Infrastructure.Applicant
