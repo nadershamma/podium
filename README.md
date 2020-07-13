@@ -12,7 +12,10 @@ their own project.
 
 I have setup Swagger UI in order to view and test the API endpoints. 
  
-### Setup
+### Database Setup
+
+SQLite is used as the data store.
+
 Run EF Core migrations
 ```
 $ cd Api/
