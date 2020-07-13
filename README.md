@@ -11,7 +11,9 @@ for simplicities sake but ordinarily the `Core`, `Infrastructure`, `Application`
 their own project.
 
 I have setup Swagger UI in order to view and test the API endpoints. 
- 
+
+Swagger docs can be found at https://localhost:5001/swagger/ 
+
 ### Database Setup
 
 SQLite is used as the data store.
