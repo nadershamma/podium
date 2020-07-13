@@ -10,7 +10,7 @@ For simplicity I have created a very simple clean architecture pattern. I have k
 for simplicities sake but ordinarily the `Core`, `Infrastructure`, `Application` and `Api` folders would all be in 
 their own project.
 
-I have setup Swagger UI in order to vue and test the API endpoints. 
+I have setup Swagger UI in order to view and test the API endpoints. 
  
 ### Setup
 Run EF Core migrations
