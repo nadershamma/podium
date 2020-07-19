@@ -41,9 +41,8 @@ namespace Api.Infrastructure.Mortgage
         }
 
         public bool MortgageExists(long id)
-        { 
-            return Queryable.Any<Core.Mortgage.Mortgage>(_context.Mortgages, e => e.Id == id);
-        
+        {
+            return _context.Mortgages.Any(e => e.Id == id);
         }
     }
 }

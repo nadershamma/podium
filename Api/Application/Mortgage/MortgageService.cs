@@ -9,23 +9,23 @@ namespace Api.Application.Mortgage
 {
     public class MortgageService : IMortgageService
     {
-        private readonly IMortgageRepository _mortgageMortgageRepository;
+        private readonly IMortgageRepository _mortgageRepository;
         private readonly IApplicantRepository _applicantRepository;
 
         public MortgageService(IMortgageRepository mortgageRepository, IApplicantRepository applicantRepository)
         {
-            _mortgageMortgageRepository = mortgageRepository;
+            _mortgageRepository = mortgageRepository;
             _applicantRepository = applicantRepository;
         }
 
         public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetMortgages()
         {
-            return await _mortgageMortgageRepository.GetMortgages();
+            return await _mortgageRepository.GetMortgages();
         }
 
         public async Task<Core.Mortgage.Mortgage> GetMortgage(long id)
         {
-            return await _mortgageMortgageRepository.GetMortgage(id);
+            return await _mortgageRepository.GetMortgage(id);
         }
 
         public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetQualifiedMortgages(long applicantId, decimal propertyValue,
@@ -39,7 +39,7 @@ namespace Api.Application.Mortgage
                 TimeSpan age = today - applicant.DateOfBirth;
                 if ((age.TotalDays / 365) >= 18)
                 {
-                    var mortgages = (List<Core.Mortgage.Mortgage>) await _mortgageMortgageRepository.GetMortgages();
+                    var mortgages = (List<Core.Mortgage.Mortgage>) await _mortgageRepository.GetMortgages();
                     decimal mortgageAmount = propertyValue - depositAmount;
                     int ltv = (int) ((mortgageAmount / propertyValue) * 100);
                     if (ltv <= 90)
@@ -60,17 +60,17 @@ namespace Api.Application.Mortgage
                 Type = createMortgageDto.Type,
                 LoanToValue = createMortgageDto.LoanToValue
             };
-            return await _mortgageMortgageRepository.CreateMortgage(mortgage);
+            return await _mortgageRepository.CreateMortgage(mortgage);
         }
 
         public async Task DeleteMortgage(long id)
         {
-            await _mortgageMortgageRepository.DeleteMortgage(id);
+            await _mortgageRepository.DeleteMortgage(id);
         }
 
         public bool MortgageExists(long id)
         {
-            return _mortgageMortgageRepository.MortgageExists(id);
+            return _mortgageRepository.MortgageExists(id);
         }
     }
 }
