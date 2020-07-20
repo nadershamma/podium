@@ -9,6 +9,6 @@ namespace Api.Core.Applicant
         public Task<Applicant> GetApplicant(long id);
         public Task<long> CreateApplicant(Applicant applicant);
         public Task DeleteApplicant(long id);
-        public bool ApplicantExists(long id);
+        public Task<bool> ApplicantExists(long id);
     }
 }

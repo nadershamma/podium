@@ -41,9 +41,9 @@ namespace Api.Infrastructure.Applicant
             await _context.SaveChangesAsync();
         }
         
-        public bool ApplicantExists(long id)
+        public async Task<bool> ApplicantExists(long id)
         {
-            return _context.Applicants.Any(e => e.Id == id);
+            return await _context.Applicants.AnyAsync(e => e.Id == id);
         }
     }
 }

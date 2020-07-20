@@ -120,7 +120,7 @@ namespace Api.Controllers
         [ProducesResponseType( StatusCodes.Status404NotFound)] 
         public async Task<ActionResult> DeleteApplicant(long id)
         {
-            if (!_service.ApplicantExists(id))
+            if (!await _service.ApplicantExists(id))
             {
                 return NotFound();
             }

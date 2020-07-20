@@ -39,9 +39,9 @@ namespace Api.Application.Applicant
             await _repository.DeleteApplicant(id);
         }
         
-        public bool ApplicantExists(long id)
+        public async Task<bool> ApplicantExists(long id)
         {
-            return _repository.ApplicantExists(id);
+            return await _repository.ApplicantExists(id);
         }
     }
 }

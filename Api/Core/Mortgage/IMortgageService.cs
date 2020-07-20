@@ -12,6 +12,6 @@ namespace Api.Core.Mortgage
         public Task<IEnumerable<Mortgage>> GetQualifiedMortgages(long applicantId, decimal propertyValue, decimal depositAmount);
         public Task<long> CreateMortgage(CreateMortgageDto createMortgageDto);
         public Task DeleteMortgage(long id);
-        public bool MortgageExists(long id);
+        public Task<bool> MortgageExists(long id);
     }
 }

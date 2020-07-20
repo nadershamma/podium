@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Api.Core.Applicant;
 using Api.Core.Mortgage;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Api.Application.Mortgage
 {
@@ -28,26 +30,29 @@ namespace Api.Application.Mortgage
             return await _mortgageRepository.GetMortgage(id);
         }
 
-        public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetQualifiedMortgages(long applicantId, decimal propertyValue,
+        public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetQualifiedMortgages(long applicantId,
+            decimal propertyValue,
             decimal depositAmount)
         {
-            
-            if (_applicantRepository.ApplicantExists(applicantId))
+            if (!await _applicantRepository.ApplicantExists(applicantId))
             {
-                DateTime today = DateTime.Now;
-                var applicant = await _applicantRepository.GetApplicant(applicantId);
-                TimeSpan age = today - applicant.DateOfBirth;
-                if ((age.TotalDays / 365) >= 18)
+                return null;
+            }
+            
+            var applicant = await _applicantRepository.GetApplicant(applicantId);
+            DateTime today = DateTime.Now;
+            TimeSpan age = today - applicant.DateOfBirth;
+            if ((age.TotalDays / 365) >= 18)
+            {
+                decimal mortgageAmount = propertyValue - depositAmount;
+                int ltv = (int) ((mortgageAmount / propertyValue) * 100);
+                if (ltv <= 90)
                 {
-                    var mortgages = (List<Core.Mortgage.Mortgage>) await _mortgageRepository.GetMortgages();
-                    decimal mortgageAmount = propertyValue - depositAmount;
-                    int ltv = (int) ((mortgageAmount / propertyValue) * 100);
-                    if (ltv <= 90)
-                    {
-                        return mortgages.Where(m => m.LoanToValue >= ltv).ToList();
-                    }
+                    return await _mortgageRepository.GetMortgages(m =>
+                        m.LoanToValue >= ltv);
                 }
             }
+
             return new List<Core.Mortgage.Mortgage>();
         }
 
@@ -68,9 +73,9 @@ namespace Api.Application.Mortgage
             await _mortgageRepository.DeleteMortgage(id);
         }
 
-        public bool MortgageExists(long id)
+        public async Task<bool> MortgageExists(long id)
         {
-            return _mortgageRepository.MortgageExists(id);
+            return await _mortgageRepository.MortgageExists(id);
         }
     }
 }

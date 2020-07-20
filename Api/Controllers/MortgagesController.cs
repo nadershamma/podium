@@ -38,15 +38,20 @@ namespace Api.Controllers
         /// <response code="200">Returns list of mortgages</response>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Mortgage>), statusCode: StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<Mortgage>>> GetMortgages(long? applicantId, decimal? propertyValue,
             decimal? depositValue)
         {
             IEnumerable<Mortgage> mortgages;
-            if (applicantId != null && propertyValue != null & depositValue != null)
+            if (applicantId.HasValue && propertyValue.HasValue & depositValue.HasValue)
             {
                 mortgages = await _service.GetQualifiedMortgages((long) applicantId, (decimal) propertyValue,
                     (decimal) depositValue);
+                if (mortgages == null)
+                {
+                    return NotFound();
+                }
             }
             else
             {
@@ -76,7 +81,7 @@ namespace Api.Controllers
         {
             var mortgage = await _service.GetMortgage(id);
 
-            if (mortgage == null)
+            if (mortgage.Equals(null))
             {
                 return NotFound();
             }
@@ -134,7 +139,7 @@ namespace Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> DeleteMortgage(long id)
         {
-            if (!_service.MortgageExists(id))
+            if (!await _service.MortgageExists(id))
             {
                 return NotFound();
             }

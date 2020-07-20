@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +22,11 @@ namespace Api.Infrastructure.Mortgage
             return await _context.Mortgages.ToListAsync<Core.Mortgage.Mortgage>();
         }
 
+        public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetMortgages(Func<Core.Mortgage.Mortgage, bool> query)
+        {
+            return await Task.Run(() => _context.Mortgages.Where(query).ToList());
+        }
+
         public async Task<Core.Mortgage.Mortgage> GetMortgage(long id)
         {
             return await _context.Mortgages.FindAsync(id);
@@ -40,9 +46,9 @@ namespace Api.Infrastructure.Mortgage
             await _context.SaveChangesAsync();
         }
 
-        public bool MortgageExists(long id)
+        public async Task<bool> MortgageExists(long id)
         {
-            return _context.Mortgages.Any(e => e.Id == id);
+            return await _context.Mortgages.AnyAsync(e => e.Id == id);
         }
     }
 }
