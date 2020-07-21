@@ -24,7 +24,8 @@ namespace Api.Infrastructure.Mortgage
 
         public async Task<IEnumerable<Core.Mortgage.Mortgage>> GetMortgages(Func<Core.Mortgage.Mortgage, bool> query)
         {
-            return await Task.Run(() => _context.Mortgages.Where(query).ToList());
+            var mortgages = _context.Mortgages.Where(query); 
+            return await Task.FromResult(mortgages);
         }
 
         public async Task<Core.Mortgage.Mortgage> GetMortgage(long id)
